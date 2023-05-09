@@ -110,7 +110,7 @@
                   <br>
                   <button @click="showModal()"
                           class="bg-blue-500 text-white font-bold rounded-md py-2 px-4 mb-2 md:mb-0 hover:bg-blue-700 transition-colors duration-300">
-                    Commencer la révision !
+                    Commencer la révision
                   </button>
                 </div>
               </div>
