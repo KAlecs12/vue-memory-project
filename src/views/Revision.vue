@@ -42,7 +42,7 @@
         <div class="flex-1 flex flex-col min-h-0 border-r border-gray-200 bg-gray-100">
           <div class="flex-1 flex flex-col pt-5 pb-4 overflow-y-auto">
             <div class="flex items-center flex-shrink-0 px-4">
-              <img class="h-8 w-auto" src="https://tailwindui.com/img/logos/workflow-logo-indigo-600-mark-gray-900-text.svg" alt="Workflow" />
+              <img class="h-8 w-auto" src="/logo.png" alt="Workflow" />
             </div>
             <nav class="mt-5 flex-1" aria-label="Sidebar">
               <div class="px-2 space-y-1">
@@ -76,24 +76,22 @@
           <div class="absolute inset-0 py-6 px-4 sm:px-6 lg:px-8">
             <div class="revision">
               <h1 class="text-3xl md:text-4xl">Révision</h1>
-              <div v-if="!revisionStarted" class="p-6">
-                <h2 class="text-xl md:text-2xl mt-4 md:mt-8 ">Choisissez les thèmes</h2>
-                <div v-for="theme in allThemes" :key="theme.id" class="theme">
-                  <input
-                      :id="theme.id"
-                      v-model="selectedThemes"
-                      :value="theme"
-                      type="checkbox"
-                      class="mr-2 md:mr-4"
-                     :disabled="areAllCardsReviewedToday(theme)"
-/>
-                  <label :for="theme.id" class="text-base md:text-lg">{{ theme.name }}</label>
-                  <span v-if="areAllCardsReviewedToday(theme)" class="text-sm md:text-base text-gray-500 ml-2">
-    (Toutes les cartes de ce thème ont déjà été révisées aujourd'hui)
-  </span>
+              <div v-if="!revisionStarted" class="flex divide-x-4 p-6">
+                <div class="pr-16">
+                <h2 class="text-xl md:text-2xl mt-4 md:mt-8 ">Choix du thèmes :</h2>
+                <li v-for="category in categories" :key="category.id" class="border border-black rounded-lg p-4 relative text-xl md:text-2xl mt-4 md:mt-8">
+                  {{category.name}}
+                  <div v-for="theme in category.themes" :key="theme.id" class=" p-4 relative">
+                    <h3 class="text-xl md:text-2xl mt-4 md:mt-8 "><input :id="theme.id" v-model="selectedThemes" :value="theme" type="checkbox" class="mr-2 md:mr-4" :disabled="areAllCardsReviewedToday(theme)"/>» {{theme.name}}</h3>
+                    <span v-if="areAllCardsReviewedToday(theme)" class="text-sm md:text-base text-gray-500 ml-2">
+                        (Toutes les cartes de ce thème ont déjà été révisées aujourd'hui)
+                      </span>
+
+                  </div>
+                </li>
                 </div>
-                <div v-if="selectedThemes.length > 0" class="mt-4 md:mt-8">
-                  <h2 class="text-xl md:text-2xl">Nombre de niveaux</h2>
+                <div v-if="selectedThemes.length > 0" class="border-blue-500 mt-4 pl-16 md:mt-8">
+                  <h2 class="text-xl md:text-2xl">Nombre de niveaux :</h2>
                   <input
                       v-model.number="numberOfLevels"
                       max="10"
@@ -202,7 +200,7 @@
             </div>
           </div>
           <div class="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
-            <button type="button" class="inline-flex w-full justify-center rounded-md bg-blue-950 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-900 sm:ml-3 sm:w-auto" @click="">Ajouter une carte</button>
+            <a type="button" class="inline-flex w-full justify-center rounded-md bg-blue-950 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-900 sm:ml-3 sm:w-auto" href="/">Ajouter une carte</a>
             <button type="button" class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto" @click="closeModal" ref="cancelButtonRef">Fermer</button>
           </div>
         </div>
@@ -240,6 +238,7 @@ export default {
     setup() {
         const store = useStore();
         const allThemes = computed(() => store.getAllThemes());
+        const categories = ref(store.$state.categories);
         const selectedThemes = ref([]);
         const numberOfLevels = ref(1);
         const newCardsPerDay = ref(5);
@@ -250,6 +249,7 @@ export default {
         const revisionInterval = ref(null);
         const sidebarOpen = ref(false)
 
+      console.log(categories)
         let openrdy = false;
         let openerror = false;
         function showModal() {
@@ -430,7 +430,8 @@ export default {
             navigation,
             sidebarOpen,
             showModal,
-            closeModal
+            closeModal,
+            categories
         };
     },
 };

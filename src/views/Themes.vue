@@ -16,8 +16,8 @@
           <div class="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
             <div class="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
               <div class="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
-                <table class="min-w-full divide-y divide-gray-200">
-                  <thead class="bg-gray-50">
+                <table class="min-w-full divide-y divide-gray-500">
+                  <thead class="bg-gray-100">
                   <tr>
                     <th scope="col" class="px-6 py-3 text-left text-xl font-medium text-gray-500 uppercase tracking-wider">Nom</th>
                     <th scope="col" class="py-3 text-xl font-medium text-gray-500 uppercase tracking-wider">Nombre de Carte</th>
@@ -26,7 +26,7 @@
                     </th>
                   </tr>
                   </thead>
-                  <tbody class="bg-white divide-y divide-gray-200">
+                  <tbody class="bg-white divide-y divide-gray-400">
                   <tr v-for="theme in category.themes" :key="theme.id">
                     <td class="px-6 py-4 whitespace-nowrap">
                       <div class="flex items-center">
@@ -51,9 +51,9 @@
                     </td>
 
                     <td class="px-6 py-4 text-right text-sm font-medium">
-                      <a class="text-indigo-600 hover:text-indigo-900" @click="showModal('Modif', theme)">Modifier</a>
+                      <button class="text-indigo-600 hover:text-indigo-900" @click="showModal('Modif', theme)">Modifier</button>
                       <br>
-                      <a class="text-indigo-600 hover:text-indigo-900" @click="showModal('Suppr', theme)" >Supprimer</a>
+                      <button class="text-indigo-600 hover:text-indigo-900" @click="showModal('Suppr', theme)" >Supprimer</button>
                     </td>
                   </tr>
                   </tbody>
@@ -135,7 +135,7 @@
               <div class="bg-gray-100 px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
                 <div class="sm:flex justify-center">
                   <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
-                    <h3 class="text-2xl font-semibold leading-6 text-gray-900 flex justify-center">Ajouter un theme</h3>
+                    <h3 class="text-2xl font-semibold leading-6 text-gray-900 flex justify-center">Ajouter un thème</h3>
                     <button type="button" class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto" @click="closeModal" ref="cancelButtonRef"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                       <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 12h-15m0 0l6.75 6.75M4.5 12l6.75-6.75" /></svg></button>
 
@@ -161,7 +161,7 @@
           <div class="bg-gray-100 px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
             <div class="sm:flex sm:items-start">
               <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
-                <h3 class="text-2xl font-semibold leading-6 text-gray-900 flex justify-center">Ajouter un theme</h3>
+                <h3 class="text-2xl font-semibold leading-6 text-gray-900 flex justify-center">Ajouter un thème</h3>
                 <button type="button" class="mt-3 inline-flex w-full  rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto" @click="closeModal" ref="cancelButtonRef"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 12h-15m0 0l6.75 6.75M4.5 12l6.75-6.75" /></svg></button>
 
