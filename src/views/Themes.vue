@@ -275,8 +275,9 @@ export default defineComponent({
         }
 
         const deleteTheme = () => {
-
-            store.deleteTheme(currentId, id)
+            const deleteModal = document.getElementById("deleteModal");
+            deleteModal.style.display = "none";
+            store.deleteTheme(categoryId, currentId)
         }
 
         const cancelEdit = () => {
