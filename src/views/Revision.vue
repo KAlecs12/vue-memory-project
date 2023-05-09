@@ -99,7 +99,7 @@
                       type="number"
                       class="border-blue-400 rounded-md px-2 py-1 w-full md:w-2/5 mt-2 md:mt-4 border border-3"
                   />
-                  <h2 class="text-xl md:text-2xl mt-4 md:mt-8">Nombre de nouvelles cartes par jour</h2>
+                  <h2 class="text-xl md:text-2xl mt-4 md:mt-8">Nombre de nouvelles cartes par jour :</h2>
                   <input
                       v-model.number="newCardsPerDay"
                       max="50"
@@ -110,7 +110,7 @@
                   <br>
                   <button @click="showModal()"
                           class="bg-blue-500 text-white font-bold rounded-md py-2 px-4 mb-2 md:mb-0 hover:bg-blue-700 transition-colors duration-300">
-                    Commencer la révision
+                    Commencer la révision !
                   </button>
                 </div>
               </div>
