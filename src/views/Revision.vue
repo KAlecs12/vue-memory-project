@@ -1,87 +1,242 @@
 <template>
-    <div class="revision">
-        <h1 class="text-3xl md:text-4xl">Révision</h1>
-        <div v-if="!revisionStarted" class="p-6">
-            <h2 class="text-xl md:text-2xl mt-4 md:mt-8 ">Choisissez les thèmes</h2>
-            <div v-for="theme in allThemes" :key="theme.id" class="theme">
-                <input
-                        :id="theme.id"
-                        v-model="selectedThemes"
-                        :value="theme"
-                        type="checkbox"
-                        class="mr-2 md:mr-4"
-                        :disabled="areAllCardsReviewedToday(theme)"
-                />
-                <label :for="theme.id" class="text-base md:text-lg">{{ theme.name }}</label>
-                <span v-if="areAllCardsReviewedToday(theme)" class="text-sm md:text-base text-gray-500 ml-2">
+  <div class="h-screen flex">
+    <TransitionRoot as="template" :show="sidebarOpen">
+      <Dialog as="div" class="fixed inset-0 flex z-40 lg:hidden" @close="sidebarOpen = false">
+        <TransitionChild as="template" enter="transition-opacity ease-linear duration-300" enter-from="opacity-0" enter-to="opacity-100" leave="transition-opacity ease-linear duration-300" leave-from="opacity-100" leave-to="opacity-0">
+          <DialogOverlay class="fixed inset-0 bg-gray-600 bg-opacity-75" />
+        </TransitionChild>
+        <TransitionChild as="template" enter="transition ease-in-out duration-300 transform" enter-from="-translate-x-full" enter-to="translate-x-0" leave="transition ease-in-out duration-300 transform" leave-from="translate-x-0" leave-to="-translate-x-full">
+          <div class="relative flex-1 flex flex-col max-w-xs w-full bg-white focus:outline-none">
+            <TransitionChild as="template" enter="ease-in-out duration-300" enter-from="opacity-0" enter-to="opacity-100" leave="ease-in-out duration-300" leave-from="opacity-100" leave-to="opacity-0">
+              <div class="absolute top-0 right-0 -mr-12 pt-2">
+                <button type="button" class="ml-1 flex items-center justify-center h-10 w-10 rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white" @click="sidebarOpen = false">
+                  <span class="sr-only">Close sidebar</span>
+                  <XIcon class="h-6 w-6 text-white" aria-hidden="true" />
+                </button>
+              </div>
+            </TransitionChild>
+            <div class="flex-1 h-0 pt-5 pb-4 overflow-y-auto">
+              <div class="flex-shrink-0 flex items-center px-4">
+                <img class="h-8 w-auto" src="https://tailwindui.com/img/logos/workflow-logo-indigo-600-mark-gray-900-text.svg" alt="Workflow" />
+              </div>
+              <nav aria-label="Sidebar" class="mt-5">
+                <div class="px-2 space-y-1">
+                  <a v-for="item in navigation" :key="item.name" :href="item.href" :class="[item.current ? 'bg-gray-100 text-gray-900' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900', 'group flex items-center px-2 py-2 text-base font-medium rounded-md']">
+                    <component :is="item.icon" :class="[item.current ? 'text-gray-500' : 'text-gray-400 group-hover:text-gray-500', 'mr-4 h-6 w-6']" aria-hidden="true" />
+                    {{ item.name }}
+                  </a>
+                </div>
+              </nav>
+            </div>
+          </div>
+        </TransitionChild>
+        <div class="flex-shrink-0 w-14" aria-hidden="true">
+          <!-- Force sidebar to shrink to fit close icon -->
+        </div>
+      </Dialog>
+    </TransitionRoot>
+
+    <!-- Static sidebar for desktop -->
+    <div class="hidden lg:flex lg:flex-shrink-0">
+      <div class="flex flex-col w-64">
+        <div class="flex-1 flex flex-col min-h-0 border-r border-gray-200 bg-gray-100">
+          <div class="flex-1 flex flex-col pt-5 pb-4 overflow-y-auto">
+            <div class="flex items-center flex-shrink-0 px-4">
+              <img class="h-8 w-auto" src="https://tailwindui.com/img/logos/workflow-logo-indigo-600-mark-gray-900-text.svg" alt="Workflow" />
+            </div>
+            <nav class="mt-5 flex-1" aria-label="Sidebar">
+              <div class="px-2 space-y-1">
+                <a v-for="item in navigation" :key="item.name" :href="item.href" :class="[item.current ? 'bg-gray-200 text-gray-900' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900', 'group flex items-center px-2 py-2 text-sm font-medium rounded-md']">
+                  <component :is="item.icon" :class="[item.current ? 'text-gray-500' : 'text-gray-400 group-hover:text-gray-500', 'mr-3 h-6 w-6']" aria-hidden="true" />
+                  {{ item.name }}
+                </a>
+              </div>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="flex flex-col min-w-0 flex-1 overflow-hidden">
+      <div class="lg:hidden">
+        <div class="flex items-center justify-between bg-gray-50 border-b border-gray-200 px-4 py-1.5">
+          <div>
+            <img class="h-8 w-auto" src="https://tailwindui.com/img/logos/workflow-mark-indigo-600.svg" alt="Workflow" />
+          </div>
+          <div>
+            <button type="button" class="-mr-3 h-12 w-12 inline-flex items-center justify-center rounded-md text-gray-500 hover:text-gray-900" @click="sidebarOpen = true">
+              <span class="sr-only">Open sidebar</span>
+              <MenuIcon class="h-6 w-6" aria-hidden="true" />
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="flex-1 relative z-0 flex overflow-hidden">
+        <main class="flex-1 relative z-0 overflow-y-auto focus:outline-none xl:order-last">
+          <!-- Start main area-->
+          <div class="absolute inset-0 py-6 px-4 sm:px-6 lg:px-8">
+            <div class="revision">
+              <h1 class="text-3xl md:text-4xl">Révision</h1>
+              <div v-if="!revisionStarted" class="p-6">
+                <h2 class="text-xl md:text-2xl mt-4 md:mt-8 ">Choisissez les thèmes</h2>
+                <div v-for="theme in allThemes" :key="theme.id" class="theme">
+                  <input
+                      :id="theme.id"
+                      v-model="selectedThemes"
+                      :value="theme"
+                      type="checkbox"
+                      class="mr-2 md:mr-4"
+                     :disabled="areAllCardsReviewedToday(theme)"
+/>
+                  <label :for="theme.id" class="text-base md:text-lg">{{ theme.name }}</label>
+                  <span v-if="areAllCardsReviewedToday(theme)" class="text-sm md:text-base text-gray-500 ml-2">
     (Toutes les cartes de ce thème ont déjà été révisées aujourd'hui)
   </span>
-            </div>
-            <div v-if="selectedThemes.length > 0" class="mt-4 md:mt-8">
-                <h2 class="text-xl md:text-2xl">Nombre de niveaux</h2>
-                <input
-                        v-model.number="numberOfLevels"
-                        max="10"
-                        min="1"
-                        type="number"
-                        class="border-blue-400 rounded-md px-2 py-1 w-full md:w-2/5 mt-2 md:mt-4 border border-3"
-                />
-                <h2 class="text-xl md:text-2xl mt-4 md:mt-8">Nombre de nouvelles cartes par jour</h2>
-                <input
-                        v-model.number="newCardsPerDay"
-                        max="50"
-                        min="1"
-                        type="number"
-                        class="border-blue-400 rounded-md px-2 py-1 w-full md:w-2/5 mt-2 md:mt-4 border border-3"
-                />
-                <br>
-                <button @click="startRevision"
-                        class="bg-blue-500 text-white font-bold rounded-md py-2 px-4 mb-2 md:mb-0 hover:bg-blue-700 transition-colors duration-300">
-                    Commencer la révision
-                </button>
-            </div>
-        </div>
-        <div v-if="revisionStarted">
-            <div v-if="currentCard" class="card mt-4 md:mt-8" @click="showFront = !showFront">
-                <div :class="{ 'card-flip': !showFront }" class="card-content">
-                    <h2 class="text-2xl md:text-3xl">{{ currentCard.recto }}</h2>
                 </div>
-                <div :class="{ 'card-flip': showFront }" class="card-content">
+                <div v-if="selectedThemes.length > 0" class="mt-4 md:mt-8">
+                  <h2 class="text-xl md:text-2xl">Nombre de niveaux</h2>
+                  <input
+                      v-model.number="numberOfLevels"
+                      max="10"
+                      min="1"
+                      type="number"
+                      class="border-blue-400 rounded-md px-2 py-1 w-full md:w-2/5 mt-2 md:mt-4 border border-3"
+                  />
+                  <h2 class="text-xl md:text-2xl mt-4 md:mt-8">Nombre de nouvelles cartes par jour</h2>
+                  <input
+                      v-model.number="newCardsPerDay"
+                      max="50"
+                      min="1"
+                      type="number"
+                      class="border-blue-400 rounded-md px-2 py-1 w-full md:w-2/5 mt-2 md:mt-4 border border-3"
+                  />
+                  <br>
+                  <button @click="showModal()"
+                          class="bg-blue-500 text-white font-bold rounded-md py-2 px-4 mb-2 md:mb-0 hover:bg-blue-700 transition-colors duration-300">
+                    Commencer la révision
+                  </button>
+                </div>
+              </div>
+
+<!--      TAB DE REVISION        -->
+              <div v-if="revisionStarted">
+                <div v-if="currentCard" class="card mt-4 md:mt-8" @click="showFront = !showFront">
+                  <div :class="{ 'card-flip': !showFront }" class="card-content">
+                    <h2 class="text-2xl md:text-3xl">{{ currentCard.recto }}</h2>
+                  </div>
+                  <div :class="{ 'card-flip': showFront }" class="card-content">
                     <h2 class="text-2xl md:text-3xl">{{ currentCard.verso }}</h2>
                     <div class="mt-4 md:mt-8">
-                        <button @click.stop="cardAnswered(true)"
-                                class="bg-green-500 text-white rounded-md py-2 px-4 mr-2 md:mr-4 hover:bg-green-700 transition-colors duration-300 p-3">
-                            Oui, je me souviens
-                        </button>
-                        <button @click.stop="cardAnswered(false)"
-                                class="bg-red-500 text-white rounded-md py-2 px-4 hover:bg-red-700 transition-colors duration-300">
-                            Non, j'ai oublié
-                        </button>
+                      <button @click.stop="cardAnswered(true)"
+                              class="bg-green-500 text-white rounded-md py-2 px-4 mr-2 md:mr-4 hover:bg-green-700 transition-colors duration-300 p-3">
+                        Oui, je me souviens
+                      </button>
+                      <button @click.stop="cardAnswered(false)"
+                              class="bg-red-500 text-white rounded-md py-2 px-4 hover:bg-red-700 transition-colors duration-300">
+                        Non, j'ai oublié
+                      </button>
                     </div>
+                  </div>
                 </div>
-            </div>
-            <div v-else class="bg-white rounded-lg shadow-md p-8 mx-auto max-w-xl">
-                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-center">
+                <div v-else class="bg-white rounded-lg shadow-md p-8 mx-auto max-w-xl">
+                  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-center">
                     <h1 class="font-bold m-3">Révision terminée !</h1>
                     <button class="bg-yellow-400 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded mb-4 sm:mr-4"
                             @click="scheduleDailyReminder">Planifier un rappel quotidien
                     </button>
                     <button class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded mb-4">
-                        <router-link :to="`/`">Retourner à l'accueil</router-link>
+                      <router-link :to="`/`">Retourner à l'accueil</router-link>
                     </button>
+                  </div>
                 </div>
+              </div>
+<!--              FIN TAB DE REVISION       -->
             </div>
-        </div>
+          </div>
+          <!-- End main area -->
+        </main>
+      </div>
     </div>
+  </div>
+
+
+  <!-- The Modal -->
+  <div id="readyModal" class="modal">
+    <div class="fixed inset-0 z-10 overflow-y-auto">
+      <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+        <div class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
+          <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+            <div class="sm:flex sm:items-start">
+              <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
+                <h3 class="text-2xl font-semibold leading-6 text-gray-900">Révision</h3>
+                <div class="mt-2">
+                  <p class="text-sm text-gray-500">Es-tu pret a commencer une révision sur les themes suivant :</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+            <button type="button" class="inline-flex w-full justify-center rounded-md bg-blue-950 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-900 sm:ml-3 sm:w-auto" @click="startRevision">Go !</button>
+            <button type="button" class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto" @click="closeModal()" ref="cancelButtonRef">Fermer</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- The Modal -->
+  <div id="errorModal" class="modal">
+    <div class="fixed inset-0 z-10 overflow-y-auto">
+      <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+        <div class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
+          <div class="bg-gray-100 px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+            <div class="sm:flex sm:items-start">
+              <div class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
+                !
+              </div>
+              <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
+                <h3 class="text-2xl font-semibold leading-6 text-gray-900">Erreur</h3>
+                <div class="mt-2">
+                  <p class="text-sm text-gray-500">Malheureusement, il semblerait qu'il n'y ait aucune carte dans le/les theme(s) sélectionné(s).</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+            <button type="button" class="inline-flex w-full justify-center rounded-md bg-blue-950 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-900 sm:ml-3 sm:w-auto" @click="">Ajouter une carte</button>
+            <button type="button" class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto" @click="closeModal" ref="cancelButtonRef">Fermer</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
 import {computed, ref} from 'vue';
 import {useStore} from '@/stores/counter';
 import {format} from 'date-fns';
+import { Dialog, DialogOverlay, TransitionChild, TransitionRoot } from '@headlessui/vue'
+import {
+  HomeIcon,
+  MenuIcon,
+  SearchCircleIcon,
+  XIcon,
+} from '@heroicons/vue/outline'
+const navigation = [
+  { name: 'Accueil', href: '/', icon: HomeIcon, current: false },
+  { name: 'Révision', href: '/revision', icon: SearchCircleIcon, current: true },
+]
 
 export default {
     name: 'Revision',
+    components: {
+      Dialog,
+      DialogOverlay,
+      TransitionChild,
+      TransitionRoot,
+      MenuIcon,
+      XIcon,
+    },
     setup() {
         const store = useStore();
         const allThemes = computed(() => store.getAllThemes());
@@ -93,16 +248,38 @@ export default {
         const currentCardIndex = ref(0);
         const showFront = ref(true);
         const revisionInterval = ref(null);
+        const sidebarOpen = ref(false)
+
+        let openrdy = false;
+        let openerror = false;
+        function showModal() {
+          const selectedThemesHaveCards = selectedThemes.value && selectedThemes.value.every(theme => theme.cards && theme.cards.length > 0);
+            if (!selectedThemesHaveCards) {
+              const errorModal = document.getElementById("errorModal");
+              errorModal.style.display = "block";
+              selectedThemes.value = [];
+              openerror = true;
+            } else {
+              const readyModal = document.getElementById("readyModal");
+              readyModal.style.display = "block";
+              openrdy = true;
+            }
+        }
+
+        function closeModal(){
+          if (openrdy){
+            const readyModal = document.getElementById("readyModal");
+            readyModal.style.display = "none";
+          }
+          if (openerror){
+            const errorModal = document.getElementById("errorModal");
+            errorModal.style.display = "none";
+          }
+        }
 
         function startRevision() {
-            const selectedThemesHaveCards = selectedThemes.value && selectedThemes.value.every(theme => theme.cards && theme.cards.length > 0);
-            if (!selectedThemesHaveCards) {
-                alert("Aucun des thèmes sélectionnés n'a de carte.");
-                selectedThemes.value = [];
-                return;
-            }
-            revisionStarted.value = true;
-            revisionCards.value = getRevisionCards();
+          revisionStarted.value = true;
+          revisionCards.value = getRevisionCards();
         }
 
         function getRevisionCards() {
@@ -188,7 +365,8 @@ export default {
 
         function areAllCardsReviewedToday(theme) {
             const currentDate = new Date();
-            return theme.cards.every((card) => {
+            if (theme.cards !== undefined) {
+              return theme.cards.every((card) => {
                 const lastRevisionDate = card.lastRevisionDate
                     ? new Date(card.lastRevisionDate)
                     : new Date(0);
@@ -197,7 +375,8 @@ export default {
                     currentDate.getMonth() === lastRevisionDate.getMonth() &&
                     currentDate.getDate() === lastRevisionDate.getDate()
                 );
-            });
+              });
+            } else return false
         }
 
         function scheduleDailyReminder() {
@@ -248,12 +427,32 @@ export default {
             cardAnswered,
             areAllCardsReviewedToday,
             scheduleDailyReminder,
+            navigation,
+            sidebarOpen,
+            showModal,
+            closeModal
         };
     },
 };
 </script>
 
 <style scoped>
+
+/* The Modal (background) */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  padding-top: 100px; /* Location of the box */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
 .revision {
     display: flex;
     flex-direction: column;
