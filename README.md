@@ -36,5 +36,26 @@ npm run build & npx http-server dist
 
 ## Organisation :
 ```
-
+vue-memory-project/
+├── public/
+│   ├── all necessary assets
+├── src/
+│   ├── router/
+│   │   ├── index.js
+│   ├── stores/
+│   │   ├── counter.js
+│   ├── views/
+│   │   ├── Cards.vue
+│   │   ├── Categories.vue
+│   │   ├── Revision.vue
+│   │   ├── Themes.vue
+├── .gitignore
+├── index.html
+├── index.css
+├── package.json
+├── package-lock.json
+├── README.md
+└── tailwind.config.js
+└── vite.config.js
+└── postcss.config.js
 ```
