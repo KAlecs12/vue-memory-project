@@ -40,6 +40,8 @@ vue-memory-project/
 ├── public/
 │   ├── all necessary assets
 ├── src/
+│   ├── App.vue
+│   ├── main.js
 │   ├── router/
 │   │   ├── index.js
 │   ├── stores/
